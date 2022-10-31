@@ -1,23 +1,23 @@
+import asyncio
 from ftx import FtxClient
-from pprint import pprint
+from ftxTester import Tester
 
 
-ftx = FtxClient()
+async def task_manager():
+
+    ftx = FtxClient(min_daily_volume=50000, update_time=1)
+    tester = Tester(ftx=ftx, usd=10, rounds=1000, maker=True)
+
+    task_list = (
+        ftx.actual_price(),
+        tester.calc(),
+    )
+
+    await asyncio.gather(*task_list)
 
 
 def main():
-    pprint(ftx.get_wallet_balances())
-    pass
-    # result = api.new_order(
-    #     buy='BTC',
-    #     sell='USD',
-    #     but_price=100000,
-    #     buy_size=100000
-    # )
-    # result = api.account_info()
-    # pprint(result)
-    # for coin in result:
-
+    asyncio.run(task_manager())
 
 
 if __name__ == '__main__':
